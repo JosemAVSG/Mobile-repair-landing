@@ -75,7 +75,10 @@ const qrSvg = await QRCode.toString(site.appUrl, {
         <hr class="my-3 border-dashed border-border" />
         <div class="flex items-center gap-4">
           <div class="size-24 shrink-0 rounded-sm p-1 outline-2 outline-kapton" data-ticket-qr set:html={qrSvg} />
-          <p class="text-xs leading-snug text-muted">Escanea para ver el estado de tu equipo</p>
+          <div class="text-xs leading-snug text-muted">
+            <p>Escanea para ver el estado de tu equipo</p>
+            <p class="mt-2 text-[0.625rem] text-subtle">con tecnología de {site.name}</p>
+          </div>
         </div>
       </div>
     </div>

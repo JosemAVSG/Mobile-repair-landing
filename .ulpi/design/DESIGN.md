@@ -1,5 +1,5 @@
 ---
-project: Taller de Reparaciones (landing)
+project: Fixtra (landing)
 register: brand
 aesthetic_direction: industrial / signage, con base technical / utilitarian
 color_strategy: restrained
@@ -12,6 +12,11 @@ visual_density: 5
 # DESIGN.md (LOCKED)
 
 > Every screen must read as the same product if placed side by side.
+
+## Marca
+
+- Producto: **Fixtra** (plataforma). "Taller de Reparaciones" es solo el taller de ejemplo dentro del ticket.
+- Respaldo opcional: "un producto de JG Labs". El dominio es infraestructura, no marca.
 
 ## Design Read
 
