@@ -40,7 +40,7 @@ Rama: usuario existente → "Ingresar" en nav → `https://repair.jglabs.tech/lo
 ## Componentes
 
 ### 1. Nav
-- **Contenido:** logo (ícono `wrench` en cuadrado kapton radio md + "Taller de Reparaciones" en Archivo 700),
+- **Contenido:** logo (ícono `wrench` en cuadrado kapton radio md + "Fixtra" en Archivo 700),
   links ancla: Funciones · Cómo funciona · Preguntas (3, ≤ 5), "Ingresar" (texto), "Pedir demo" (botón kapton).
 - **Estados:** sobre hero = fondo graphite, texto on-dark. Al pasar el hero = bench/95 con borde inferior
   `border` (IntersectionObserver sobre el hero; sin JS → queda graphite, sigue legible).
@@ -93,7 +93,7 @@ Rama: usuario existente → "Ingresar" en nav → `https://repair.jglabs.tech/lo
 
 ### 4. Antes / Después (matriz)
 - H2: **"Lo que cambia en el mostrador."**
-- Tabla real (`<table>`, `<caption class="sr-only">`) con 3 columnas: Situación · Sin sistema · Con Taller de Reparaciones. 5 filas:
+- Tabla real (`<table>`, `<caption class="sr-only">`) con 3 columnas: Situación · Sin sistema · Con Fixtra. 5 filas:
   1. El cliente pregunta por su equipo · Te llama o te escribe varias veces · Escanea el QR del ticket y lo ve solo
   2. Buscar un equipo · Revisar el cuaderno y los estantes · Buscar por orden, cliente o modelo
   3. Saber si hay un repuesto · Ir a mirar la caja · Stock al día con alerta de faltantes
@@ -148,7 +148,7 @@ Rama: usuario existente → "Ingresar" en nav → `https://repair.jglabs.tech/lo
 - Patrón decorativo: una franja de cinta diagonal tenue (ink 6% opacidad) es la ÚNICA decoración. Opcional.
 
 ### 10. Footer
-- graphite, on-dark-muted. "© {año} Taller de Reparaciones · JG Labs" · links: Aplicación, Contacto. Bordes regladores arriba.
+- graphite, on-dark-muted. "© {año} Fixtra · JG Labs" · links: Aplicación, Contacto. Bordes regladores arriba.
 
 ---
 

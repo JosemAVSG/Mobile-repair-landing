@@ -1,43 +1,23 @@
-# Astro Starter Kit: Minimal
+# Fixtra · Landing
+
+Landing page de **Fixtra**, software para talleres de servicio técnico de celulares, computadores, consolas y tablets.
+
+## Stack
+
+Astro 7 · Tailwind CSS 4 · GSAP (ScrollTrigger, solo en el hero) · QR generado en build.
+
+## Desarrollo
+
+Requiere Node >= 22.12 (`nvm use`).
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev      # localhost:4321
+npm run build    # genera ./dist
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Contenido
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Textos, links y contacto: `src/data/site.ts`
+- Capturas de la app (opcional): `src/assets/screenshots/{dashboard,orden,estado-publico}.png`. La sección aparece sola si existen.
+- Sistema de diseño bloqueado: `.ulpi/design/DESIGN.md`. Spec de secciones: `.ulpi/design/landing.md`.

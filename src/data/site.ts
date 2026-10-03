@@ -1,8 +1,8 @@
 // Datos centralizados de la landing. Cambia acá nombre, links y contacto.
 export const site = {
-  name: 'Taller de Reparaciones',
+  name: 'Fixtra',
   brand: 'JG Labs',
-  title: 'Taller de Reparaciones | Software para servicio técnico',
+  title: 'Fixtra | Software para servicio técnico',
   description:
     'Órdenes, seguimiento por QR, repuestos, técnicos y facturación para talleres de celulares, computadores y consolas.',
   appUrl: 'https://repair.jglabs.tech',
