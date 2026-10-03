@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* Tokens bloqueados en .ulpi/design/DESIGN.md. No agregar valores fuera de ahí. */
+@theme {
+  --color-*: initial;
+  --color-bench: oklch(0.965 0.006 250);
+  --color-surface: oklch(0.995 0.003 250);
+  --color-graphite: oklch(0.215 0.012 255);
+  --color-graphite-elevated: oklch(0.28 0.014 255);
+  --color-ink: oklch(0.22 0.015 255);
+  --color-muted: oklch(0.47 0.018 255);
+  --color-subtle: oklch(0.62 0.015 255);
+  --color-border: oklch(0.88 0.008 250);
+  --color-on-dark: oklch(0.96 0.006 250);
+  --color-on-dark-muted: oklch(0.74 0.014 255);
+  --color-kapton: oklch(0.79 0.155 72);
+  --color-kapton-ink: oklch(0.52 0.12 62);
+  --color-success: oklch(0.55 0.13 150);
+  --color-warning: oklch(0.56 0.13 72);
+  --color-danger: oklch(0.55 0.19 27);
+  --color-info: oklch(0.52 0.12 245);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-display: 'Archivo', ui-sans-serif, sans-serif;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius-*: initial;
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 9999px;
+
+  --shadow-*: initial;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-bench font-sans text-ink antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    font-stretch: 118%;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-kapton);
+    outline-offset: 2px;
+  }
+  .on-kapton :focus-visible {
+    outline-color: var(--color-ink);
+  }
+}
+
+@utility label-mono {
+  @apply font-mono text-xs font-medium uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Cinta Kapton: único motivo decorativo además de la etiqueta de inventario */
+@utility tape {
+  @apply bg-kapton px-2 py-1 text-ink;
+}
+
+/* Borde inferior dentado del ticket térmico */
+@utility ticket-edge {
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 16px 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal-group [data-reveal] {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 280ms var(--ease-out),
+      transform 280ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 60ms);
+  }
+  .js .reveal-group.is-visible [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}

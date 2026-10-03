@@ -1,0 +1,23 @@
+---
+import { devices } from '../data/site';
+import Icon from './Icon.astro';
+---
+
+<section aria-labelledby="frentes" class="bg-graphite text-on-dark">
+  <div class="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+    <h2 id="frentes" class="label-mono text-on-dark-muted" style="font-stretch: 100%">Para todo lo que entra al taller</h2>
+    <ul class="mt-5 grid grid-cols-2 border-t border-l border-graphite-elevated lg:grid-cols-4">
+      {
+        devices.map((d) => (
+          <li class="min-w-0 border-r border-b border-graphite-elevated p-4 sm:p-6">
+            <span class="text-kapton">
+              <Icon name={d.icon as any} class="size-7" />
+            </span>
+            <p class="mt-4 font-display text-base font-bold [font-stretch:100%] sm:text-lg sm:[font-stretch:112%]">{d.name}</p>
+            <p class="mt-1 font-mono text-xs leading-relaxed text-on-dark-muted">{d.detail}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

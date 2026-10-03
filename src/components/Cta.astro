@@ -1,0 +1,42 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+
+const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent(`Demo de ${site.name}`)}`;
+const whatsapp = site.whatsapp
+  ? `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Hola, quiero una demo de ${site.name}`)}`
+  : null;
+---
+
+<section id="contacto" aria-labelledby="cta-titulo" class="on-kapton relative overflow-hidden bg-kapton text-ink">
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 opacity-[0.06] [background:repeating-linear-gradient(-45deg,var(--color-ink)_0_18px,transparent_18px_44px)]"
+  ></div>
+  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+    <h2 id="cta-titulo" class="max-w-3xl text-3xl font-extrabold tracking-[-0.02em] sm:text-5xl sm:leading-tight">
+      Tu próximo equipo, ya con ticket y QR.
+    </h2>
+    <p class="mt-5 max-w-xl text-lg">Te mostramos el sistema funcionando con un taller real.</p>
+    <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+      <a
+        href={mailto}
+        class="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-ink px-6 font-semibold text-on-dark transition-[filter] duration-[120ms] hover:brightness-125"
+      >
+        {site.ctaLabel}
+        <Icon name="ArrowRight" class="size-5" />
+      </a>
+      {
+        whatsapp && (
+          <a
+            href={whatsapp}
+            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border-2 border-ink px-6 font-semibold"
+          >
+            <Icon name="MessageCircle" class="size-5" />
+            Escribir por WhatsApp
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>

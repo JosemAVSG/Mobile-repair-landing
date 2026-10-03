@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+// Solo se monta si existen capturas reales en src/assets/screenshots/.
+// Nombres esperados: dashboard, orden, estado-publico (.png | .jpg | .webp)
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/screenshots/*.{png,jpg,jpeg,webp}', {
+  eager: true,
+});
+const find = (name: string) =>
+  Object.entries(files).find(([path]) => path.includes(`/${name}.`))?.[1].default;
+
+const shots = [
+  { img: find('dashboard'), alt: 'Tablero con equipos activos, entregados e ingresos del taller' },
+  { img: find('orden'), alt: 'Detalle de una orden de reparación con su línea de tiempo' },
+  { img: find('estado-publico'), alt: 'Página pública que ve el cliente al escanear el QR' },
+].filter((s): s is { img: ImageMetadata; alt: string } => Boolean(s.img));
+---
+
+{
+  shots.length > 0 && (
+    <section aria-labelledby="capturas-titulo" class="py-20 sm:py-28">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 id="capturas-titulo" class="max-w-xl text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem] sm:leading-tight">
+          Así se ve por dentro.
+        </h2>
+        <div class="mt-12 grid gap-4 lg:grid-cols-3">
+          {shots.map((s, i) => (
+            <figure class:list={['overflow-hidden rounded-lg border border-border bg-surface', i === 0 && 'lg:col-span-2 lg:row-span-2']}>
+              <div class="flex h-7 items-center gap-1.5 bg-graphite px-3" aria-hidden="true">
+                <span class="size-2 rounded-full bg-subtle" />
+                <span class="size-2 rounded-full bg-subtle" />
+                <span class="size-2 rounded-full bg-subtle" />
+              </div>
+              <Image src={s.img} alt={s.alt} loading="lazy" class="w-full" />
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,152 @@
+---
+import QRCode from 'qrcode';
+import { site, ticketSteps } from '../data/site';
+
+// Se renderiza en su estado final (todos los pasos marcados + sello).
+// GSAP, si corre, lo lleva al estado inicial y lo anima con el scroll.
+const qrSvg = await QRCode.toString(site.appUrl, {
+  type: 'svg',
+  margin: 0,
+  errorCorrectionLevel: 'M',
+  color: { dark: '#161b22', light: '#0000' },
+});
+---
+
+<figure class="relative mx-auto w-full max-w-[23rem] px-2" data-ticket-scene>
+  <figcaption class="sr-only">
+    Ejemplo de ticket de reparación con código QR para que el cliente siga el estado de su equipo.
+  </figcaption>
+
+  <p
+    aria-hidden="true"
+    data-ticket-chip
+    data-tone="success"
+    class="mb-3 inline-flex items-center gap-2 rounded-sm bg-graphite-elevated px-2.5 py-1.5 font-mono text-xs font-medium tracking-wide text-on-dark uppercase"
+  >
+    <span
+      class="size-2 rounded-full bg-success [[data-tone=info]_&]:bg-info [[data-tone=muted]_&]:bg-subtle [[data-tone=warning]_&]:bg-kapton"
+    ></span>
+    <span data-ticket-chip-text>Lista para retiro</span>
+  </p>
+
+  <!-- Ranura de la impresora -->
+  <div aria-hidden="true" class="relative z-10 -mx-2 h-5 rounded-md bg-graphite-elevated p-1.5">
+    <div class="h-full rounded-sm bg-graphite"></div>
+  </div>
+
+  <!-- El ticket sale de la ranura -->
+  <div class="-mt-2.5 pb-8">
+    <div class="drop-shadow-[0_18px_22px_oklch(0.22_0.015_255/0.45)]">
+      <div class="ticket-edge rounded-t-sm bg-surface px-5 pt-6 pb-8 font-mono text-[0.8125rem] leading-relaxed text-ink" data-ticket>
+        <p class="text-center font-semibold tracking-wide">TALLER DE REPARACIONES</p>
+        <div class="mt-2 flex justify-between text-muted">
+          <span>ORDEN #1048</span>
+          <span>03/10/2026</span>
+        </div>
+        <hr class="my-3 border-dashed border-border" />
+        <dl class="grid grid-cols-[5.5rem_1fr] gap-y-0.5">
+          <dt class="text-muted">EQUIPO</dt><dd>PlayStation 5</dd>
+          <dt class="text-muted">FALLA</dt><dd>No da video (HDMI)</dd>
+          <dt class="text-muted">TÉCNICO</dt><dd>Andrés R.</dd>
+        </dl>
+        <hr class="my-3 border-dashed border-border" />
+        <div class="relative">
+        <ol class="space-y-1.5">
+          {
+            ticketSteps.map((s) => (
+              <li class="flex items-center gap-2.5" data-ticket-step data-tone={s.tone} data-label={s.label}>
+                <span class="grid size-3.5 place-items-center border border-ink" aria-hidden="true">
+                  <span class="size-2 bg-ink" data-ticket-mark />
+                </span>
+                <span class="uppercase" data-ticket-text>{s.label}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <!-- Sello -->
+        <div
+          aria-hidden="true"
+          data-ticket-stamp
+          class="absolute top-1/2 right-0 grid size-24 -translate-y-1/2 -rotate-8 place-items-center rounded-full border-[3px] border-kapton-ink text-center font-mono text-[0.625rem] leading-tight font-semibold tracking-wider text-kapton-ink uppercase"
+        >
+          <span>Lista<br />para<br />retiro</span>
+        </div>
+        </div>
+        <hr class="my-3 border-dashed border-border" />
+        <div class="flex items-center gap-4">
+          <div class="size-24 shrink-0 rounded-sm p-1 outline-2 outline-kapton" data-ticket-qr set:html={qrSvg} />
+          <p class="text-xs leading-snug text-muted">Escanea para ver el estado de tu equipo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</figure>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const scene = document.querySelector<HTMLElement>('[data-ticket-scene]');
+  const hero = document.getElementById('hero');
+
+  if (scene && hero) {
+    const ticket = scene.querySelector('[data-ticket]')!;
+    const chip = scene.querySelector<HTMLElement>('[data-ticket-chip]')!;
+    const chipText = scene.querySelector('[data-ticket-chip-text]')!;
+    const steps = [...scene.querySelectorAll<HTMLElement>('[data-ticket-step]')];
+    const stamp = scene.querySelector('[data-ticket-stamp]')!;
+    const qr = scene.querySelector('[data-ticket-qr]')!;
+
+    const setChip = (i: number) => {
+      const step = steps[Math.max(0, i)];
+      chip.dataset.tone = step.dataset.tone;
+      chipText.textContent = step.dataset.label ?? '';
+    };
+
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+      // Se "imprime" de arriba hacia abajo; arranca asomando el encabezado
+      gsap.set(ticket, { clipPath: 'inset(0% 0% 82% 0%)' });
+      gsap.set(steps.map((s) => s.querySelector('[data-ticket-mark]')), { scale: 0 });
+      gsap.set(steps.map((s) => s.querySelector('[data-ticket-text]')), { color: '#80878f' });
+      gsap.set(stamp, { autoAlpha: 0, scale: 1.15 });
+      gsap.set(qr, { outlineColor: 'rgba(247, 168, 48, 0)' });
+      setChip(0);
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: '+=150%',
+          pin: true,
+          scrub: 0.6,
+          onUpdate: (self) => {
+            // 20%–85% del recorrido reparte los 5 estados
+            const p = (self.progress - 0.2) / 0.65;
+            setChip(Math.min(steps.length - 1, Math.floor(p * steps.length)));
+          },
+        },
+      });
+
+      tl.to(ticket, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.2, ease: 'power2.out' });
+      steps.forEach((s) => {
+        tl.to(s.querySelector('[data-ticket-mark]'), { scale: 1, duration: 0.05 }).to(
+          s.querySelector('[data-ticket-text]'),
+          { color: '#161b22', duration: 0.05 },
+          '<',
+        );
+        tl.to({}, { duration: 0.08 }); // pausa: cada estado ocupa 0.13 del recorrido
+      });
+      tl.to(stamp, { autoAlpha: 1, scale: 1, duration: 0.1, ease: 'power3.out' }, '>+0.02').to(
+        qr,
+        { outlineColor: 'rgba(247, 168, 48, 1)', duration: 0.05 },
+        '<',
+      );
+
+      return () => setChip(steps.length - 1);
+    });
+  }
+</script>

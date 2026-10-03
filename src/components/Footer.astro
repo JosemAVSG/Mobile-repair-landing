@@ -1,0 +1,14 @@
+---
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-graphite text-on-dark-muted">
+  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-6">
+    <p>© {year} {site.name} · {site.brand}</p>
+    <ul class="flex gap-6">
+      <li><a href={site.appUrl} class="hover:text-on-dark">Aplicación</a></li>
+      <li><a href={`mailto:${site.contactEmail}`} class="hover:text-on-dark">Contacto</a></li>
+    </ul>
+  </div>
+</footer>

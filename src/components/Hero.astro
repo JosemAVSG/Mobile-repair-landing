@@ -1,0 +1,35 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+import Ticket from './Ticket.astro';
+---
+
+<section id="hero" class="bg-graphite text-on-dark">
+  <div class="mx-auto grid max-w-6xl items-center gap-14 px-4 pt-28 pb-16 sm:px-6 lg:min-h-svh lg:grid-cols-12 lg:gap-8 lg:pt-24 lg:pb-12">
+    <div class="lg:col-span-7">
+      <p class="label-mono tape inline-block">Software para servicio técnico</p>
+      <h1 class="mt-6 text-[2.125rem] leading-[1.05] font-extrabold tracking-[-0.02em] min-[400px]:text-[2.5rem] sm:text-5xl lg:text-[4rem]">
+        Cada equipo en tu mostrador, ubicado y con su cliente al tanto.
+      </h1>
+      <p class="mt-6 max-w-[38rem] text-lg leading-relaxed text-on-dark-muted">{site.description}</p>
+      <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+        <a
+          href="#contacto"
+          class="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-kapton px-6 font-semibold text-ink transition-[filter] duration-[120ms] hover:brightness-95"
+        >
+          {site.ctaLabel}
+          <Icon name="ArrowRight" class="size-5" />
+        </a>
+        <a
+          href="#como-funciona"
+          class="inline-flex min-h-12 items-center justify-center rounded-md border border-on-dark-muted px-6 font-semibold transition-colors duration-[120ms] hover:border-on-dark"
+        >
+          Ver cómo funciona
+        </a>
+      </div>
+    </div>
+    <div class="lg:col-span-5">
+      <Ticket />
+    </div>
+  </div>
+</section>

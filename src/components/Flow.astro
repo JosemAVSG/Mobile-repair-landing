@@ -1,0 +1,26 @@
+---
+import { steps } from '../data/site';
+---
+
+<section id="como-funciona" aria-labelledby="flujo-titulo" class="border-y border-border bg-surface py-20 sm:py-28">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <h2 id="flujo-titulo" class="max-w-xl text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem] sm:leading-tight">
+      De la recepción a la entrega.
+    </h2>
+    <ol class="reveal-group relative mt-14 grid gap-10 border-l border-ink pl-8 lg:grid-cols-5 lg:gap-6 lg:border-t lg:border-l-0 lg:pt-10 lg:pl-0">
+      {
+        steps.map((s, i) => (
+          <li class="relative" data-reveal style={`--i: ${i}`}>
+            <span
+              class="absolute top-1.5 -left-[2.4rem] size-3 rounded-sm bg-kapton lg:-top-[2.9rem] lg:left-0"
+              aria-hidden="true"
+            />
+            <span class="font-mono text-sm text-muted">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="mt-2 text-lg font-bold" style="font-stretch: 112%">{s.title}</h3>
+            <p class="mt-2 leading-relaxed text-muted">{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
