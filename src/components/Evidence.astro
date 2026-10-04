@@ -1,0 +1,56 @@
+---
+import Icon from './Icon.astro';
+
+const etapas = ['Antes', 'Durante', 'Después'];
+
+const respaldos = [
+  {
+    title: 'Fotos en cada etapa',
+    text: 'Registra el estado del equipo al recibirlo, durante la reparación y al entregarlo. Si hay un reclamo, tienes cómo demostrar en qué estado llegó.',
+  },
+  {
+    title: 'Presupuesto con historial',
+    text: 'Si el cliente rechaza el presupuesto, la orden queda registrada así, con su historial. Nada se pierde en un chat.',
+  },
+  {
+    title: 'Garantía en la misma orden',
+    text: 'Cuando un equipo vuelve por garantía, la orden pasa a ese estado y conservas todo lo que se hizo antes.',
+  },
+];
+---
+
+<section aria-labelledby="evidencias-titulo" class="pb-20 sm:pb-28">
+  <div class="mx-auto grid max-w-6xl items-start gap-12 px-4 sm:px-6 lg:grid-cols-12">
+    <div class="lg:col-span-5">
+      <h2 id="evidencias-titulo" class="text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem] sm:leading-tight">
+        Cada reparación, con respaldo.
+      </h2>
+      <p class="mt-4 max-w-md leading-relaxed text-muted">
+        La confianza no se pide, se demuestra. Fixtra guarda la evidencia de cada trabajo para que tu taller tenga
+        cómo responder.
+      </p>
+      <ol class="mt-8 grid grid-cols-3 gap-3" aria-label="Etapas con foto">
+        {
+          etapas.map((e) => (
+            <li class="flex aspect-[4/5] flex-col items-center justify-center gap-3 rounded-md border border-dashed border-ink/30 bg-surface">
+              <span class="text-kapton-ink">
+                <Icon name="Camera" class="size-7" />
+              </span>
+              <span class="label-mono tape">{e}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <ul class="border-t-2 border-ink lg:col-span-6 lg:col-start-7">
+      {
+        respaldos.map((r) => (
+          <li class="border-b border-border py-6">
+            <h3 class="text-lg font-bold" style="font-stretch: 112%">{r.title}</h3>
+            <p class="mt-2 max-w-[60ch] leading-relaxed text-muted">{r.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
