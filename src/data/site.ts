@@ -7,6 +7,8 @@ export const site = {
     'Órdenes, seguimiento por QR, repuestos, técnicos y facturación para talleres de celulares, computadores y consolas.',
   appUrl: 'https://repair.jglabs.tech',
   loginUrl: 'https://repair.jglabs.tech/login',
+  signupUrl: 'https://repair.jglabs.tech/registro',
+  trialDays: 14,
   contactEmail: 'jmgg.95n@gmail.com',
   // Número en formato internacional sin "+" (ej: 573001234567). Vacío = no se muestra el botón.
   whatsapp: '573114390119',
@@ -116,3 +118,40 @@ export const faqs = [
     a: 'Sí. Desde la configuración subes tu logo y eliges el color de tu taller.',
   },
 ];
+
+// Planes y precios. Deben coincidir con APP_BILLING_PRECIO_*_COP del API.
+export const plans = [
+  {
+    id: 'basico',
+    name: 'Básico',
+    price: 49900,
+    tagline: 'Para el taller que arranca a ordenarse.',
+    features: [
+      'Órdenes con ticket y seguimiento por QR',
+      'Clientes, repuestos y facturación',
+      'Hasta 2 técnicos',
+    ],
+    highlighted: false,
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    price: 99900,
+    tagline: 'Para el taller con equipo y stock propio.',
+    features: [
+      'Todo lo del plan Básico',
+      'Técnicos ilimitados',
+      'Inventario y alertas de stock',
+      'Métricas avanzadas',
+    ],
+    highlighted: true,
+  },
+  {
+    id: 'empresarial',
+    name: 'Empresarial',
+    price: null,
+    tagline: 'Para cadenas y varias sedes.',
+    features: ['Todo lo del plan Pro', 'Acompañamiento en la puesta en marcha', 'Condiciones a la medida'],
+    highlighted: false,
+  },
+] as const;
