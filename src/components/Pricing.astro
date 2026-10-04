@@ -3,9 +3,6 @@ import { plans, site } from '../data/site';
 import Icon from './Icon.astro';
 
 const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
-const whatsapp = site.whatsapp
-  ? `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Hola, me interesa el plan Empresarial de ${site.name}`)}`
-  : `mailto:${site.contactEmail}?subject=${encodeURIComponent(`Plan Empresarial de ${site.name}`)}`;
 ---
 
 <section id="precios" aria-labelledby="precios-titulo" class="border-t border-border py-20 sm:py-28">
@@ -20,7 +17,7 @@ const whatsapp = site.whatsapp
       </p>
     </div>
 
-    <ul class="mt-12 grid gap-6 md:grid-cols-3">
+    <ul class="mt-12 grid gap-6 md:max-w-3xl md:grid-cols-2">
       {
         plans.map((plan) => (
           <li
@@ -37,14 +34,8 @@ const whatsapp = site.whatsapp
             <h3 class="font-display text-xl font-bold">{plan.name}</h3>
             <p class="mt-2 min-h-12 text-sm text-muted">{plan.tagline}</p>
             <p class="mt-6 flex items-baseline gap-1.5">
-              {plan.price ? (
-                <>
-                  <span class="text-4xl font-extrabold tracking-[-0.02em]">{cop.format(plan.price)}</span>
-                  <span class="text-sm text-muted">COP / mes</span>
-                </>
-              ) : (
-                <span class="text-4xl font-extrabold tracking-[-0.02em]">A convenir</span>
-              )}
+              <span class="text-4xl font-extrabold tracking-[-0.02em]">{cop.format(plan.price)}</span>
+              <span class="text-sm text-muted">COP / mes</span>
             </p>
             <ul class="mt-6 flex-1 space-y-3 border-t border-border pt-6 text-sm">
               {plan.features.map((f) => (
@@ -56,28 +47,18 @@ const whatsapp = site.whatsapp
                 </li>
               ))}
             </ul>
-            {plan.price ? (
-              <a
-                href={site.signupUrl}
-                class:list={[
-                  'mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-6 font-semibold transition-[filter] duration-[120ms]',
-                  plan.highlighted
-                    ? 'bg-kapton text-ink hover:brightness-95'
-                    : 'border-2 border-ink text-ink hover:bg-bench',
-                ]}
-              >
-                Empezar prueba gratis
-                <Icon name="ArrowRight" class="size-5" />
-              </a>
-            ) : (
-              <a
-                href={whatsapp}
-                class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-md border-2 border-ink px-6 font-semibold text-ink hover:bg-bench"
-              >
-                <Icon name="MessageCircle" class="size-5" />
-                Hablar con ventas
-              </a>
-            )}
+            <a
+              href={site.signupUrl}
+              class:list={[
+                'mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-6 font-semibold transition-[filter] duration-[120ms]',
+                plan.highlighted
+                  ? 'bg-kapton text-ink hover:brightness-95'
+                  : 'border-2 border-ink text-ink hover:bg-bench',
+              ]}
+            >
+              Empezar prueba gratis
+              <Icon name="ArrowRight" class="size-5" />
+            </a>
           </li>
         ))
       }
