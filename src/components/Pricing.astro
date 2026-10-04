@@ -50,7 +50,7 @@ const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP',
               ))}
             </ul>
             <a
-              href={site.signupUrl}
+              href={`${site.signupUrl}?plan=${plan.id}`}
               class:list={[
                 'mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-6 font-semibold transition-[filter] duration-[120ms]',
                 plan.highlighted
