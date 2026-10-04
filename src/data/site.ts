@@ -119,7 +119,8 @@ export const faqs = [
   },
 ];
 
-// Planes y precios. Deben coincidir con APP_BILLING_PRECIO_*_COP del API.
+// Planes de respaldo: la landing lee el catálogo real de GET /api/billing/planes (ver plans.ts).
+// Estos valores solo se usan si el API no responde al compilar; deben coincidir con los del API.
 export const plans = [
   {
     id: 'basico',

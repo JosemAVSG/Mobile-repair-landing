@@ -1,7 +1,9 @@
 ---
-import { plans, site } from '../data/site';
+import { site } from '../data/site';
+import { getPlans } from '../data/plans';
 import Icon from './Icon.astro';
 
+const plans = await getPlans();
 const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 ---
 
