@@ -146,12 +146,4 @@ export const plans = [
     ],
     highlighted: true,
   },
-  {
-    id: 'empresarial',
-    name: 'Empresarial',
-    price: null,
-    tagline: 'Para cadenas y varias sedes.',
-    features: ['Todo lo del plan Pro', 'Acompañamiento en la puesta en marcha', 'Condiciones a la medida'],
-    highlighted: false,
-  },
 ] as const;
