@@ -111,7 +111,7 @@ export const faqs = [
   },
   {
     q: '¿Puedo tener varios técnicos?',
-    a: 'Sí. Cada técnico tiene su propio usuario y puedes asignarle órdenes. Básico incluye hasta 2 usuarios (contando al administrador) y Pro hasta 8.',
+    a: 'Sí. Cada técnico tiene su propio usuario y puedes asignarle órdenes. Básico incluye hasta 3 usuarios (contando al administrador) y Pro hasta 8.',
   },
   {
     q: '¿Puedo usar la marca de mi taller?',
@@ -129,7 +129,7 @@ export const plans = [
     priceUsd: 15,
     tagline: 'Para el taller que arranca a ordenarse: reparaciones, clientes e inventario.',
     features: [
-      'Hasta 2 técnicos (incluido el administrador)',
+      'Hasta 3 técnicos (incluido el administrador)',
       'Reparaciones, clientes e inventario',
       'Dashboard esencial',
     ],
