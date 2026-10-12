@@ -5,6 +5,9 @@ import Icon from './Icon.astro';
 
 const plans = await getPlans();
 const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+const usd = (n: number) => `US$${n}`;
+// Sin precio en USD para algún plan no se ofrece el selector (todo queda en pesos)
+const hasUsd = plans.every((p) => p.priceUsd > 0);
 ---
 
 <section id="precios" aria-labelledby="precios-titulo" class="border-t border-border py-20 sm:py-28">
@@ -17,6 +20,21 @@ const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP',
         Prueba {site.name} gratis por {site.trialDays} días con todas las funciones. Sin tarjeta para empezar; cancela
         cuando quieras.
       </p>
+      {
+        hasUsd && (
+          <div class="mt-6 flex flex-wrap items-center gap-3">
+            <span class="label-mono text-muted">Ver precios en</span>
+            <div role="group" aria-label="Moneda de los precios" class="inline-flex rounded-md border border-border p-1">
+              <button type="button" data-currency-btn="cop" aria-pressed="true" class="currency-btn">
+                COP · pesos
+              </button>
+              <button type="button" data-currency-btn="usd" aria-pressed="false" class="currency-btn">
+                USD · dólares
+              </button>
+            </div>
+          </div>
+        )
+      }
     </div>
 
     <ul class="mt-12 grid gap-6 md:max-w-3xl md:grid-cols-2">
@@ -36,8 +54,14 @@ const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP',
             <h3 class="font-display text-xl font-bold">{plan.name}</h3>
             <p class="mt-2 min-h-12 text-sm text-muted">{plan.tagline}</p>
             <p class="mt-6 flex items-baseline gap-1.5">
-              <span class="text-4xl font-extrabold tracking-[-0.02em]">{cop.format(plan.price)}</span>
-              <span class="text-sm text-muted">COP / mes</span>
+              <span class="cur-cop text-4xl font-extrabold tracking-[-0.02em]">{cop.format(plan.price)}</span>
+              <span class="cur-cop text-sm text-muted">COP / mes</span>
+              {hasUsd && (
+                <>
+                  <span class="cur-usd text-4xl font-extrabold tracking-[-0.02em]">{usd(plan.priceUsd)}</span>
+                  <span class="cur-usd text-sm text-muted">USD / mes</span>
+                </>
+              )}
             </p>
             <ul class="mt-6 flex-1 space-y-3 border-t border-border pt-6 text-sm">
               {plan.features.map((f) => (
@@ -50,6 +74,7 @@ const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP',
               ))}
             </ul>
             <a
+              data-signup-plan={plan.id}
               href={`${site.signupUrl}?plan=${plan.id}`}
               class:list={[
                 'mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-6 font-semibold transition-[filter] duration-[120ms]',
@@ -66,9 +91,94 @@ const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP',
       }
     </ul>
 
-    <p class="mt-8 text-sm text-muted">
+    <p class="cur-cop mt-8 text-sm text-muted">
       Precios en pesos colombianos. El cobro es mensual con tarjeta a través de Wompi; puedes cambiar de plan o
       cancelar desde la app.
     </p>
+    {
+      hasUsd && (
+        <p class="cur-usd mt-8 text-sm text-muted">
+          Precios en dólares. Fuera de Colombia el pago es mensual en USDT (red TRON): generas la orden en la app y tu
+          plan se activa solo cuando llega el pago. No hay cobro automático; renuevas cada mes. Si tu taller está en
+          Colombia, se cobra en pesos con tarjeta: el país que eliges al registrarte define la moneda.
+        </p>
+      )
+    }
   </div>
 </section>
+
+<style is:global>
+  /* Por defecto pesos; <html data-currency="usd"> cambia lo que se ve. Sin JS se queda en pesos. */
+  .cur-usd {
+    display: none;
+  }
+  :root[data-currency='usd'] .cur-usd {
+    display: inline;
+  }
+  :root[data-currency='usd'] p.cur-usd {
+    display: block;
+  }
+  :root[data-currency='usd'] .cur-cop {
+    display: none;
+  }
+  .currency-btn {
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-muted, inherit);
+    transition: background-color 120ms, color 120ms;
+  }
+  .currency-btn[aria-pressed='true'] {
+    background: var(--color-ink, #161a1f);
+    color: var(--color-bench, #fff);
+  }
+</style>
+
+<script>
+  import { CURRENCY_KEY, detectCurrency, guessCountry, signupHref } from '../lib/geo';
+
+  const tz = (() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      return undefined;
+    }
+  })();
+  const country = guessCountry(tz);
+
+  const read = () => {
+    try {
+      return localStorage.getItem(CURRENCY_KEY);
+    } catch {
+      return null;
+    }
+  };
+
+  function apply(currency: 'cop' | 'usd') {
+    document.documentElement.dataset.currency = currency;
+    document.querySelectorAll<HTMLButtonElement>('[data-currency-btn]').forEach((b) => {
+      b.setAttribute('aria-pressed', String(b.dataset.currencyBtn === currency));
+    });
+  }
+
+  // Los botones "Empezar prueba gratis" llevan el país deducido como pista (el registro lo preselecciona)
+  document.querySelectorAll<HTMLAnchorElement>('a[data-signup-plan]').forEach((a) => {
+    a.href = signupHref(a.href, a.dataset.signupPlan ?? '', country);
+  });
+
+  apply(detectCurrency(tz, read()));
+
+  document.querySelectorAll<HTMLButtonElement>('[data-currency-btn]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const currency = b.dataset.currencyBtn === 'usd' ? 'usd' : 'cop';
+      try {
+        localStorage.setItem(CURRENCY_KEY, currency);
+      } catch {
+        /* sin almacenamiento: vale solo para esta visita */
+      }
+      apply(currency);
+    });
+  });
+</script>

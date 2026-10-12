@@ -1,9 +1,14 @@
 import { plans as fallbackPlans } from './site';
 
+// Si el API todavía no informa precioUsd (backend sin actualizar), se usa el de respaldo del mismo plan.
+const fallbackUsd = (id: string): number => fallbackPlans.find((f) => f.id === id)?.priceUsd ?? 0;
+
 export interface Plan {
   id: string;
   name: string;
   price: number;
+  /** Precio mensual en USD (se paga en USDT fuera de Colombia). */
+  priceUsd: number;
   tagline: string;
   features: readonly string[];
   highlighted: boolean;
@@ -14,6 +19,7 @@ interface ApiPlan {
   nombre: string;
   descripcion?: string | null;
   precioCop: number;
+  precioUsd?: number | null;
   features: string[];
   destacado: boolean;
 }
@@ -36,6 +42,7 @@ export async function getPlans(): Promise<readonly Plan[]> {
       id: p.plan.toLowerCase(),
       name: p.nombre,
       price: p.precioCop,
+      priceUsd: p.precioUsd ?? fallbackUsd(p.plan.toLowerCase()),
       tagline: p.descripcion ?? '',
       features: p.features,
       highlighted: p.destacado,
