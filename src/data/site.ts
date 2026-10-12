@@ -126,6 +126,7 @@ export const plans = [
     id: 'basico',
     name: 'Básico',
     price: 49900,
+    priceUsd: 15,
     tagline: 'Para el taller que arranca a ordenarse.',
     features: [
       'Órdenes con ticket y seguimiento por QR',
@@ -138,6 +139,7 @@ export const plans = [
     id: 'pro',
     name: 'Pro',
     price: 99900,
+    priceUsd: 30,
     tagline: 'Para el taller con equipo y stock propio.',
     features: [
       'Todo lo del plan Básico',
