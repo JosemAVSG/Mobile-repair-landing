@@ -48,3 +48,15 @@ test('signupHref: agrega el plan y el país solo si se conoce', () => {
     'https://repair.jglabs.tech/registro?plan=basico',
   );
 });
+
+test('signupHref: reenvía el código del promotor solo si hay uno', () => {
+  assert.equal(
+    signupHref('https://repair.jglabs.tech/registro', 'pro', 'CO', 'JANI10'),
+    'https://repair.jglabs.tech/registro?plan=pro&pais=CO&ref=JANI10',
+  );
+  assert.equal(
+    signupHref('https://repair.jglabs.tech/registro', 'pro', null, 'JANI10'),
+    'https://repair.jglabs.tech/registro?plan=pro&ref=JANI10',
+  );
+  assert.equal(signupHref('https://repair.jglabs.tech/registro', 'pro', null, null), 'https://repair.jglabs.tech/registro?plan=pro');
+});

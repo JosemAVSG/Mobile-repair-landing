@@ -98,10 +98,14 @@ export function detectCurrency(tz: string | null | undefined, saved?: string | n
   return tz === 'America/Bogota' ? 'cop' : 'usd';
 }
 
-/** Enlace de registro con el plan y, si se conoce, el país como pista (el registro lo deja preseleccionado). */
-export function signupHref(base: string, planId: string, country: string | null): string {
+/**
+ * Enlace de registro con el plan y, si se conocen, el país (pista: el registro lo deja preseleccionado) y el código
+ * del promotor que recomendó la app (el registro lo precarga y lo envía al backend).
+ */
+export function signupHref(base: string, planId: string, country: string | null, ref: string | null = null): string {
   const url = new URL(base);
   url.searchParams.set('plan', planId);
   if (country) url.searchParams.set('pais', country);
+  if (ref) url.searchParams.set('ref', ref);
   return url.toString();
 }
