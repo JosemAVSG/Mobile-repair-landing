@@ -1,0 +1,306 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { getPlans } from '../data/plans';
+import { tiers, tierLabel, affiliateSteps, affiliateRules, affiliateFaqs } from '../data/affiliates';
+
+const plans = await getPlans();
+const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+
+const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent(`Quiero ser promotor de ${site.name}`)}`;
+const whatsapp = site.whatsapp
+  ? `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Hola, quiero ser promotor de ${site.name}`)}`
+  : null;
+
+// Datos para la calculadora del cliente (precios reales del catálogo)
+const calc = JSON.stringify({
+  plans: plans.map((p) => ({ id: p.id, cop: p.price, usd: p.priceUsd })),
+  tiers,
+});
+---
+
+<Layout
+  title={`Programa de promotores | ${site.name}`}
+  description={`Gana una comisión mensual recurrente por cada taller que refieras a ${site.name}.`}
+  noindex
+>
+  <header class="bg-graphite text-on-dark">
+    <nav aria-label="Principal" class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+      <a href="/" class="flex items-center gap-2.5 font-display font-bold" style="font-stretch: 112%">
+        <span class="grid size-9 place-items-center rounded-md bg-kapton text-ink">
+          <Icon name="Wrench" class="size-5" />
+        </span>
+        <span>{site.name}</span>
+      </a>
+      <a href="/" class="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-on-dark-muted hover:text-on-dark">
+        Volver al inicio
+      </a>
+    </nav>
+  </header>
+
+  <main id="contenido">
+    <section class="bg-graphite pb-20 text-on-dark">
+      <div class="mx-auto max-w-6xl px-4 pt-12 sm:px-6 sm:pt-20">
+        <p class="label-mono tape inline-block">Programa de promotores</p>
+        <h1 class="mt-6 max-w-3xl text-[2.125rem] leading-[1.05] font-extrabold tracking-[-0.02em] sm:text-5xl lg:text-[3.5rem]">
+          Refiere talleres y cobra todos los meses mientras sigan pagando.
+        </h1>
+        <p class="mt-6 max-w-[38rem] text-lg leading-relaxed text-on-dark-muted">
+          De 20% a 30% de cada suscripción de los talleres que traigas. Es ingreso extra que se repite, no un pago único.
+        </p>
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          <a
+            href={whatsapp ?? mailto}
+            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-kapton px-6 font-semibold text-ink transition-[filter] duration-[120ms] hover:brightness-95"
+          >
+            Quiero ser promotor
+            <Icon name="ArrowRight" class="size-5" />
+          </a>
+          <a
+            href="#calculadora"
+            class="inline-flex min-h-12 items-center justify-center rounded-md border border-on-dark-muted px-6 font-semibold transition-colors duration-[120ms] hover:border-on-dark"
+          >
+            Calcular mis ingresos
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="niveles-titulo" class="py-20 sm:py-28">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 id="niveles-titulo" class="max-w-2xl text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem] sm:leading-tight">
+          Más talleres activos, más porcentaje.
+        </h2>
+        <ul class="mt-10 grid gap-6 md:max-w-4xl md:grid-cols-3">
+          {
+            tiers.map((t) => (
+              <li class="rounded-lg border border-border bg-surface p-6">
+                <p class="label-mono text-muted">{tierLabel(t)} talleres activos</p>
+                <p class="mt-3 text-5xl font-extrabold tracking-[-0.02em]">{t.rate}%</p>
+                <p class="mt-2 text-sm text-muted">de cada pago de tus talleres referidos</p>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-6 max-w-2xl text-sm text-muted">
+          El nivel aplica a toda tu comisión del mes, no solo a los talleres que pasan el umbral.
+        </p>
+      </div>
+    </section>
+
+    <section id="calculadora" aria-labelledby="calc-titulo" class="border-t border-border py-20 sm:py-28">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 id="calc-titulo" class="max-w-2xl text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem] sm:leading-tight">
+          Calcula cuánto ganarías al mes.
+        </h2>
+        <div id="calc" data-calc={calc} class="mt-10 grid gap-8 lg:grid-cols-12">
+          <div class="rounded-lg border border-border bg-surface p-6 sm:p-8 lg:col-span-7">
+            <div class="grid gap-6 sm:grid-cols-2">
+              {
+                plans.map((p) => (
+                  <label class="block">
+                    <span class="font-semibold">Talleres plan {p.name}</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="500"
+                      step="1"
+                      value={p.highlighted ? '2' : '3'}
+                      data-calc-plan={p.id}
+                      inputmode="numeric"
+                      class="mt-2 block min-h-12 w-full rounded-md border border-border bg-bench px-4 text-lg"
+                    />
+                  </label>
+                ))
+              }
+            </div>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <span class="label-mono text-muted">Mostrar en</span>
+              <div role="group" aria-label="Moneda del cálculo" class="inline-flex rounded-md border border-border p-1">
+                <button type="button" data-calc-cur="cop" aria-pressed="true" class="calc-btn">COP · pesos</button>
+                <button type="button" data-calc-cur="usd" aria-pressed="false" class="calc-btn">USD · dólares</button>
+              </div>
+            </div>
+          </div>
+          <div class="on-kapton rounded-lg bg-kapton p-6 text-ink sm:p-8 lg:col-span-5">
+            <p class="label-mono">Ganarías aproximadamente</p>
+            <p class="mt-3 text-4xl font-extrabold tracking-[-0.02em] sm:text-5xl" id="calc-total" aria-live="polite">—</p>
+            <p class="mt-1 text-sm">al mes, mientras tus talleres sigan pagando</p>
+            <p class="mt-6 border-t border-ink/20 pt-4 text-sm" id="calc-detail"></p>
+          </div>
+        </div>
+        <p class="mt-6 max-w-2xl text-sm text-muted">
+          Es una estimación con los precios de lista de hoy ({plans.map((p) => `${p.name} ${cop.format(p.price)}`).join(' · ')}).
+          La comisión real se calcula sobre lo que cada taller paga.
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="pasos-titulo" class="border-t border-border py-20 sm:py-28">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 id="pasos-titulo" class="max-w-2xl text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem] sm:leading-tight">
+          Así funciona.
+        </h2>
+        <ol class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {
+            affiliateSteps.map((s, i) => (
+              <li class="rounded-lg border border-border bg-surface p-6">
+                <span class="label-mono tape inline-block">Paso {i + 1}</span>
+                <h3 class="mt-4 font-display text-lg font-bold">{s.title}</h3>
+                <p class="mt-2 text-sm text-muted">{s.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section aria-labelledby="reglas-titulo" class="border-t border-border py-20 sm:py-28">
+      <div class="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-12">
+        <h2 id="reglas-titulo" class="text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem] sm:leading-tight lg:col-span-4">
+          Reglas claras.
+        </h2>
+        <ul class="space-y-4 border-t-2 border-ink pt-6 lg:col-span-8">
+          {
+            affiliateRules.map((r) => (
+              <li class="flex gap-3">
+                <span class="mt-1 shrink-0 text-success">
+                  <Icon name="Check" class="size-4" />
+                </span>
+                <span class="max-w-[62ch] leading-relaxed">{r}</span>
+              </li>
+            ))
+          }
+          <li class="flex gap-3 text-muted">
+            <span class="mt-1 shrink-0"><Icon name="Info" class="size-4" /></span>
+            <span class="max-w-[62ch] leading-relaxed">
+              La prueba gratis dura {site.trialDays} días con todas las funciones. Las condiciones del programa pueden
+              ajustarse con aviso previo.
+            </span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="faq-titulo" class="border-t border-border py-20 sm:py-28">
+      <div class="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-12">
+        <h2 id="faq-titulo" class="text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem] sm:leading-tight lg:col-span-4">
+          Preguntas frecuentes
+        </h2>
+        <div class="border-t-2 border-ink lg:col-span-8">
+          {
+            affiliateFaqs.map((f) => (
+              <details class="group border-b border-border">
+                <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 font-semibold [&::-webkit-details-marker]:hidden">
+                  {f.q}
+                  <span class="shrink-0 text-kapton-ink transition-transform duration-[120ms] group-open:rotate-45">
+                    <Icon name="Plus" class="size-5" />
+                  </span>
+                </summary>
+                <p class="max-w-[62ch] pb-5 leading-relaxed text-muted">{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="cta-titulo" class="on-kapton bg-kapton text-ink">
+      <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
+        <h2 id="cta-titulo" class="max-w-3xl text-3xl font-extrabold tracking-[-0.02em] sm:text-5xl sm:leading-tight">
+          ¿Quieres ser promotor?
+        </h2>
+        <p class="mt-5 max-w-xl text-lg">Escríbenos y te contamos cómo empezar.</p>
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          <a
+            href={mailto}
+            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-ink px-6 font-semibold text-on-dark transition-[filter] duration-[120ms] hover:brightness-125"
+          >
+            Escribir por correo
+            <Icon name="ArrowRight" class="size-5" />
+          </a>
+          {
+            whatsapp && (
+              <a
+                href={whatsapp}
+                class="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border-2 border-ink px-6 font-semibold"
+              >
+                <Icon name="MessageCircle" class="size-5" />
+                Escribir por WhatsApp
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .calc-btn {
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    transition: background-color 120ms, color 120ms;
+  }
+  .calc-btn[aria-pressed='true'] {
+    background: var(--color-ink);
+    color: var(--color-bench);
+  }
+</style>
+
+<script>
+  interface CalcData {
+    plans: { id: string; cop: number; usd: number }[];
+    tiers: { min: number; max?: number; rate: number }[];
+  }
+
+  const root = document.getElementById('calc');
+  if (root) {
+    const data: CalcData = JSON.parse(root.dataset.calc ?? '{}');
+    const total = document.getElementById('calc-total')!;
+    const detail = document.getElementById('calc-detail')!;
+    const inputs = root.querySelectorAll<HTMLInputElement>('[data-calc-plan]');
+    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-calc-cur]');
+    let currency: 'cop' | 'usd' = 'cop';
+
+    const fmt = (n: number) =>
+      currency === 'cop'
+        ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(n)
+        : `US$${n.toFixed(2)}`;
+
+    function render() {
+      let shops = 0;
+      let revenue = 0;
+      inputs.forEach((input) => {
+        const n = Math.max(0, Math.min(500, Math.floor(Number(input.value) || 0)));
+        const plan = data.plans.find((p) => p.id === input.dataset.calcPlan);
+        if (!plan) return;
+        shops += n;
+        revenue += n * (currency === 'cop' ? plan.cop : plan.usd);
+      });
+      const tier = [...data.tiers].reverse().find((t) => shops >= t.min);
+      const rate = tier?.rate ?? 0;
+      total.textContent = fmt((revenue * rate) / 100);
+      detail.textContent = tier
+        ? `${shops} talleres activos · nivel del ${rate}% sobre ${fmt(revenue)} de suscripciones al mes`
+        : 'Agrega talleres para ver tu ingreso.';
+    }
+
+    inputs.forEach((i) => i.addEventListener('input', render));
+    buttons.forEach((b) =>
+      b.addEventListener('click', () => {
+        currency = b.dataset.calcCur === 'usd' ? 'usd' : 'cop';
+        buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        render();
+      }),
+    );
+    render();
+  }
+</script>

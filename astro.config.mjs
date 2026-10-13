@@ -10,7 +10,7 @@ const site = process.env.SITE_URL || undefined;
 // https://astro.build/config
 export default defineConfig({
   site,
-  integrations: site ? [sitemap()] : [],
+  integrations: site ? [sitemap({ filter: (page) => !page.includes('/promotores') })] : [],
   vite: {
     plugins: [tailwindcss()]
   }

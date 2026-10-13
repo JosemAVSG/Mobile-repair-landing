@@ -5,9 +5,11 @@ import { site } from '../data/site';
 interface Props {
   title?: string;
   description?: string;
+  /** Página fuera de buscadores (ej: programa de promotores en piloto cerrado). */
+  noindex?: boolean;
 }
 
-const { title = site.title, description = site.description } = Astro.props;
+const { title = site.title, description = site.description, noindex = false } = Astro.props;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
 
@@ -26,8 +28,8 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
-    <meta name="robots" content="index, follow" />
-    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    {canonical && !noindex && <link rel="canonical" href={canonical} />}
     {canonical && <meta property="og:url" content={canonical} />}
     {Astro.site && <link rel="sitemap" href="/sitemap-index.xml" />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
