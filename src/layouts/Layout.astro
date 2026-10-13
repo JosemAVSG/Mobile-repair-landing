@@ -42,6 +42,10 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
   <body>
     <slot />
     <script>
+      // Link de un promotor (?ref=CODIGO): se recuerda para enviarlo al registro desde cualquier página
+      import { saveRef } from '../lib/referral';
+      saveRef(window.location.search);
+
       const groups = document.querySelectorAll('.reveal-group');
       const io = new IntersectionObserver(
         (entries) => {

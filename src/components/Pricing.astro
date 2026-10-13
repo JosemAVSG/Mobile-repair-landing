@@ -138,6 +138,7 @@ const hasUsd = plans.every((p) => p.priceUsd > 0);
 
 <script>
   import { CURRENCY_KEY, detectCurrency, guessCountry, signupHref } from '../lib/geo';
+  import { currentRef } from '../lib/referral';
 
   const tz = (() => {
     try {
@@ -147,6 +148,7 @@ const hasUsd = plans.every((p) => p.priceUsd > 0);
     }
   })();
   const country = guessCountry(tz);
+  const ref = currentRef(window.location.search);
 
   const read = () => {
     try {
@@ -164,8 +166,9 @@ const hasUsd = plans.every((p) => p.priceUsd > 0);
   }
 
   // Los botones "Empezar prueba gratis" llevan el país deducido como pista (el registro lo preselecciona)
+  // y el código del promotor del link, si lo hay
   document.querySelectorAll<HTMLAnchorElement>('a[data-signup-plan]').forEach((a) => {
-    a.href = signupHref(a.href, a.dataset.signupPlan ?? '', country);
+    a.href = signupHref(a.href, a.dataset.signupPlan ?? '', country, ref);
   });
 
   apply(detectCurrency(tz, read()));
