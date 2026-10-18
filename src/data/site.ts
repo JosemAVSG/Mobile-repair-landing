@@ -8,7 +8,7 @@ export const site = {
   appUrl: 'https://repair.jglabs.tech',
   loginUrl: 'https://repair.jglabs.tech/login',
   signupUrl: 'https://repair.jglabs.tech/registro',
-  trialDays: 14,
+  trialDays: 7,
   contactEmail: 'jmgg.95n@gmail.com',
   // Número en formato internacional sin "+" (ej: 573001234567). Vacío = no se muestra el botón.
   whatsapp: '573114390119',
