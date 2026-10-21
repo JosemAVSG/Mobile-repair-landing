@@ -1,0 +1,149 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { privacyMeta, privacyRoles, privacySections } from '../data/privacy';
+---
+
+<Layout
+  title={`Aviso de privacidad | ${site.name}`}
+  description={`Cómo tratamos tus datos personales y los de tus clientes en ${site.name}.`}
+>
+  <header class="bg-graphite text-on-dark">
+    <nav aria-label="Principal" class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+      <a href="/" class="flex items-center gap-2.5 font-display font-bold" style="font-stretch: 112%">
+        <span class="grid size-9 place-items-center rounded-md bg-kapton text-ink">
+          <Icon name="Wrench" class="size-5" />
+        </span>
+        <span>{site.name}</span>
+      </a>
+      <a href="/" class="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-on-dark-muted hover:text-on-dark">
+        Volver al inicio
+      </a>
+    </nav>
+  </header>
+
+  <main id="contenido" class="bg-bench">
+    <section class="border-b border-border bg-surface">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+        <p class="label-mono tape inline-block">Aviso de privacidad</p>
+        <h1 class="mt-6 max-w-3xl text-[2.125rem] leading-[1.05] font-extrabold tracking-[-0.02em] sm:text-5xl">
+          Cómo tratamos tus datos
+        </h1>
+        <p class="mt-6 max-w-[42rem] text-lg leading-relaxed text-muted">
+          Este aviso explica qué datos tratamos en {privacyMeta.producto}, con qué propósito,
+          con quién los compartimos y cómo puedes ejercer tus derechos.
+        </p>
+        <p class="mt-6 text-sm text-subtle">
+          Responsable: <strong class="font-semibold text-ink">{privacyMeta.responsable}</strong> ·
+          Última actualización: {privacyMeta.fecha}
+        </p>
+      </div>
+    </section>
+
+    <div class="mx-auto max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid lg:grid-cols-[16rem_minmax(0,1fr)]">
+      <aside class="mb-10 lg:mb-0">
+        <nav aria-label="Contenido del aviso" class="lg:sticky lg:top-24">
+          <p class="label-mono text-subtle">Contenido</p>
+          <ol class="mt-4 space-y-2 text-sm">
+            {
+              privacySections.map((section, index) => (
+                <li>
+                  <a
+                    href={`#${section.id}`}
+                    class="flex gap-2 text-muted transition-colors hover:text-ink"
+                  >
+                    <span class="font-mono text-subtle">{String(index + 1).padStart(2, '0')}</span>
+                    <span>{section.title}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
+      </aside>
+
+      <div class="max-w-3xl space-y-12">
+        <section class="rounded-lg border border-border bg-surface p-6 sm:p-8">
+          <h2 class="text-xl font-bold text-ink">Dos roles, un mismo sistema</h2>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            {
+              privacyRoles.map((role) => (
+                <div class="rounded-md border border-border bg-bench p-5">
+                  <p class="label-mono tape inline-block">{role.rol}</p>
+                  <p class="mt-4 text-sm font-semibold text-ink">{role.de}</p>
+                  <p class="mt-2 text-sm leading-relaxed text-muted">{role.descripcion}</p>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        {
+          privacySections.map((section) => (
+            <section id={section.id} class="scroll-mt-24">
+              <h2 class="text-xl font-bold text-ink sm:text-2xl">{section.title}</h2>
+              <div class="mt-5 space-y-4 text-[0.9375rem] leading-relaxed text-muted">
+                {section.blocks.map((block) => {
+                  if (block.kind === 'p') return <p>{block.text}</p>;
+                  if (block.kind === 'ul') {
+                    return (
+                      <ul class="list-disc space-y-2 pl-5 marker:text-subtle">
+                        {block.items.map((item) => (
+                          <li>{item}</li>
+                        ))}
+                      </ul>
+                    );
+                  }
+                  if (block.kind === 'ol') {
+                    return (
+                      <ol class="list-decimal space-y-2 pl-5 marker:text-subtle">
+                        {block.items.map((item) => (
+                          <li>{item}</li>
+                        ))}
+                      </ol>
+                    );
+                  }
+                  if (block.kind === 'note') {
+                    return (
+                      <div class="rounded-md border-l-4 border-kapton bg-surface px-5 py-4 text-ink">
+                        {block.text}
+                      </div>
+                    );
+                  }
+                  return (
+                    <div class="overflow-x-auto rounded-md border border-border bg-surface">
+                      <table class="w-full min-w-[36rem] border-collapse text-left text-sm">
+                        <thead>
+                          <tr class="border-b border-border">
+                            {block.head.map((cell) => (
+                              <th scope="col" class="px-4 py-3 font-semibold text-ink">
+                                {cell}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {block.rows.map((row) => (
+                            <tr class="border-b border-border last:border-0 align-top">
+                              {row.map((cell) => (
+                                <td class="px-4 py-3 leading-relaxed text-muted">{cell}</td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

@@ -8,6 +8,8 @@ export const site = {
   appUrl: 'https://repair.jglabs.tech',
   loginUrl: 'https://repair.jglabs.tech/login',
   signupUrl: 'https://repair.jglabs.tech/registro',
+  // URL absoluta del aviso de privacidad. La app (otro dominio) la usa para enlazar.
+  privacyUrl: 'https://fixtra.jglabs.tech/privacidad',
   trialDays: 7,
   contactEmail: 'jmgg.95n@gmail.com',
   // Número en formato internacional sin "+" (ej: 573001234567). Vacío = no se muestra el botón.
