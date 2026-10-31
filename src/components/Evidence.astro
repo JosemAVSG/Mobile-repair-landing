@@ -1,7 +1,14 @@
 ---
-import Icon from './Icon.astro';
+import { Image } from 'astro:assets';
+import antes from '../assets/evidencia/antes.png';
+import durante from '../assets/evidencia/durante.png';
+import despues from '../assets/evidencia/despues.png';
 
-const etapas = ['Antes', 'Durante', 'Después'];
+const etapas = [
+  { label: 'Antes', src: antes, alt: 'Celular con la pantalla estrellada, tal como llega al taller' },
+  { label: 'Durante', src: durante, alt: 'El mismo celular abierto, con la pantalla retirada y la batería a la vista' },
+  { label: 'Después', src: despues, alt: 'El celular reparado, con la pantalla nueva encendida' },
+];
 
 const respaldos = [
   {
@@ -32,15 +39,22 @@ const respaldos = [
       <ol class="mt-8 grid grid-cols-3 gap-3" aria-label="Etapas con foto">
         {
           etapas.map((e) => (
-            <li class="flex aspect-[4/5] flex-col items-center justify-center gap-3 rounded-md border border-dashed border-ink/30 bg-surface">
-              <span class="text-kapton-ink">
-                <Icon name="Camera" class="size-7" />
-              </span>
-              <span class="label-mono tape">{e}</span>
+            <li class="relative aspect-[4/5] overflow-hidden rounded-md border border-ink/20 bg-surface">
+              <Image
+                src={e.src}
+                alt={e.alt}
+                widths={[160, 240, 320]}
+                sizes="(min-width: 1024px) 140px, 30vw"
+                format="webp"
+                loading="lazy"
+                class="size-full object-cover"
+              />
+              <span class="label-mono tape absolute bottom-2 left-2">{e.label}</span>
             </li>
           ))
         }
       </ol>
+      <p class="mt-3 text-xs text-muted">Ejemplo ilustrativo.</p>
     </div>
     <ul class="border-t-2 border-ink lg:col-span-6 lg:col-start-7">
       {
