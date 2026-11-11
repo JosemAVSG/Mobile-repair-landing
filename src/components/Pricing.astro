@@ -24,13 +24,25 @@ const hasUsd = plans.every((p) => p.priceUsd > 0);
         hasUsd && (
           <div class="mt-6 flex flex-wrap items-center gap-3">
             <span class="label-mono text-muted">Ver precios en</span>
-            <div role="group" aria-label="Moneda de los precios" class="inline-flex rounded-md border border-border p-1">
-              <button type="button" data-currency-btn="cop" aria-pressed="true" class="currency-btn">
+            <div
+              role="group"
+              aria-label="Moneda de los precios"
+              data-currency-seg
+              class="currency-seg relative inline-grid grid-flow-col auto-cols-auto rounded-md border border-border p-1"
+            >
+              <button type="button" data-currency-btn="cop" aria-pressed="true" class="currency-cell currency-btn">
                 COP · pesos
               </button>
-              <button type="button" data-currency-btn="usd" aria-pressed="false" class="currency-btn">
+              <button type="button" data-currency-btn="usd" aria-pressed="false" class="currency-cell currency-btn">
                 USD · dólares
               </button>
+              <div
+                aria-hidden="true"
+                class="currency-thumb pointer-events-none absolute inset-0 grid grid-flow-col auto-cols-auto p-1"
+              >
+                <span class="currency-cell">COP · pesos</span>
+                <span class="currency-cell">USD · dólares</span>
+              </div>
             </div>
           </div>
         )
@@ -121,18 +133,73 @@ const hasUsd = plans.every((p) => p.priceUsd > 0);
   :root[data-currency='usd'] .cur-cop {
     display: none;
   }
-  .currency-btn {
+  .currency-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
     min-height: 2.75rem;
     padding: 0 1rem;
     border-radius: 0.25rem;
     font-size: 0.875rem;
     font-weight: 600;
+    line-height: 1;
+  }
+  .currency-btn {
+    position: relative;
     color: var(--color-muted, inherit);
     transition: background-color 120ms, color 120ms;
   }
+  /* Sin JS el botón activo se pinta por sí mismo; con JS lo hace el thumb elástico. */
   .currency-btn[aria-pressed='true'] {
     background: var(--color-ink, #161a1f);
     color: var(--color-bench, #fff);
+  }
+  .currency-thumb {
+    display: none;
+  }
+
+  /* Thumb elástico (mismo efecto que el selector de la app): los bordes del thumb se animan por separado;
+     el borde que avanza va rápido y el que lo sigue, más lento y con rebote = estira y recoge. Las
+     propiedades están registradas para que el navegador pueda interpolarlas. */
+  @property --rs-l {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+  }
+  @property --rs-r {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+  }
+  .currency-seg[data-js] .currency-btn[aria-pressed='true'] {
+    background: transparent;
+    color: var(--color-muted, inherit);
+  }
+  .currency-seg[data-js] .currency-thumb {
+    display: grid;
+    background: var(--color-ink, #161a1f);
+    color: var(--color-bench, #fff);
+    clip-path: inset(0.25rem var(--rs-r) 0.25rem var(--rs-l) round 0.25rem);
+  }
+  .currency-seg[data-js][data-ready] .currency-thumb {
+    transition:
+      --rs-l 320ms cubic-bezier(0.34, 1.4, 0.64, 1),
+      --rs-r 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .currency-seg[data-js][data-ready][data-dir='backward'] .currency-thumb {
+    transition:
+      --rs-l 180ms cubic-bezier(0.23, 1, 0.32, 1),
+      --rs-r 320ms cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+  .currency-seg[data-snap] .currency-thumb {
+    transition: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .currency-seg[data-js][data-ready] .currency-thumb,
+    .currency-seg[data-js][data-ready][data-dir='backward'] .currency-thumb {
+      transition: none;
+    }
   }
 </style>
 
@@ -158,11 +225,37 @@ const hasUsd = plans.every((p) => p.priceUsd > 0);
     }
   };
 
-  function apply(currency: 'cop' | 'usd') {
+  const seg = document.querySelector<HTMLElement>('[data-currency-seg]');
+  const thumb = seg?.querySelector<HTMLElement>('.currency-thumb');
+  let prevIndex = -1;
+
+  // Ubica el thumb sobre el botón activo midiendo con rects fraccionarios. Con animate=false (carga,
+  // cambio de tamaño) se reubica sin transición: solo la selección estira la goma.
+  function place(animate: boolean) {
+    if (!seg || !thumb) return;
+    const buttons = Array.from(seg.querySelectorAll<HTMLButtonElement>('[data-currency-btn]'));
+    const index = Math.max(0, buttons.findIndex((b) => b.getAttribute('aria-pressed') === 'true'));
+    const o = thumb.getBoundingClientRect();
+    const r = buttons[index].getBoundingClientRect();
+    if (!o.width) return;
+    const left = Math.round((r.left - o.left) * 100) / 100;
+    const right = Math.round((o.right - r.right) * 100) / 100;
+    seg.dataset.dir = index >= prevIndex ? 'forward' : 'backward';
+    prevIndex = index;
+    if (!animate) {
+      seg.setAttribute('data-snap', '');
+      requestAnimationFrame(() => seg.removeAttribute('data-snap'));
+    }
+    seg.style.setProperty('--rs-l', `${left}px`);
+    seg.style.setProperty('--rs-r', `${right}px`);
+  }
+
+  function apply(currency: 'cop' | 'usd', animate = true) {
     document.documentElement.dataset.currency = currency;
     document.querySelectorAll<HTMLButtonElement>('[data-currency-btn]').forEach((b) => {
       b.setAttribute('aria-pressed', String(b.dataset.currencyBtn === currency));
     });
+    place(animate);
   }
 
   // Los botones "Empezar prueba gratis" llevan el país deducido como pista (el registro lo preselecciona)
@@ -171,7 +264,15 @@ const hasUsd = plans.every((p) => p.priceUsd > 0);
     a.href = signupHref(a.href, a.dataset.signupPlan ?? '', country, ref);
   });
 
-  apply(detectCurrency(tz, read()));
+  seg?.setAttribute('data-js', '');
+  apply(detectCurrency(tz, read()), false);
+  // Las transiciones se activan tras la primera medición (sin deslizar al cargar).
+  requestAnimationFrame(() => seg?.setAttribute('data-ready', ''));
+  // Re-mide si cambia el tamaño o carga la fuente, sin animar.
+  const remeasure = () => place(false);
+  window.addEventListener('resize', remeasure);
+  document.fonts?.ready.then(remeasure).catch(() => {});
+  if (seg && typeof ResizeObserver !== 'undefined') new ResizeObserver(remeasure).observe(seg);
 
   document.querySelectorAll<HTMLButtonElement>('[data-currency-btn]').forEach((b) => {
     b.addEventListener('click', () => {
