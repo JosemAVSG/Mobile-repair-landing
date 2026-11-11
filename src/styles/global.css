@@ -39,6 +39,10 @@
 @layer base {
   html {
     scroll-padding-top: 5rem;
+    /* Pantallas grandes: todo el diseño está en rem, así que escalar la raíz agranda texto, espacios y el ancho
+       del contenedor a la vez (como subir el zoom). Hasta 96rem (1536px) vale 1rem; de ahí crece con el ancho de
+       la ventana hasta 1.75rem, y el contenido ocupa siempre la misma proporción de la pantalla. */
+    font-size: clamp(1rem, 1.0417vw, 1.75rem);
   }
   body {
     @apply bg-bench font-sans text-ink antialiased;
